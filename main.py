@@ -5,6 +5,7 @@
 
 import pandas as pd
 import numpy as np 
+import os
 
 class expense():
 
@@ -13,17 +14,38 @@ class expense():
         Self.amount = amount
         Self.description = description
     def store_data(self):
-           df = pd.DataFrame(data=exp_dict) #error
-           df.to_csv("expenses.csv" , index = False)
-           print("Data Stored Successfully 🥳")
-           print("Total Expense Till Now Is : ",sum(total))
-           print("-"*50)
-           
-    def full_summary(self): # to read file and show its data 
-        pass
+        df = pd.DataFrame(data=exp_dict) 
+        file_path = 'expenses.csv'      
+        file_exists = os.path.isfile(file_path)   #if file exist it will not add header again and again 
+        df.to_csv("expenses.csv" , index = False , mode="a", header= not file_exists)
+        print("Data Stored Successfully 🥳")
+        print("-"*50)
 
-    def category_summary(self): # just add list of category wise expense
-        pass
+#---------------------------------------------------------------------------------------------------------------           
+
+def full_summary(): # to read file and show its data 
+        pt = pd.read_csv("expenses.csv")
+        print(pt)
+
+def category_summary(): # just add list of category wise expense
+        pt = pd.read_csv("expenses.csv")
+        print("\n-\n"*50)
+        select_category = int(input("Select A Category : - \n 1.FOOD \n 2.CLOTHES \n 3.GROCERY \n 4.BILLS AND DUES \n 5.OTHER MISCELLANEOUS EXPENSE : "))
+
+        if select_category==1 :
+            col = "Food"
+        elif select_category==2:
+            col = "Clothes"
+        elif select_category==3:
+            col = "Grocery"
+        elif select_category==4:
+            col = "Bills_Dues"   
+        elif select_category==5:
+            col = "Miscellaneous"
+        else:
+            print("invalid choice")
+            category_summary()
+        print(pt.loc[:,[col]])
 
 #---------------------------------------------------------------------------------------------------------------
 
@@ -50,7 +72,7 @@ def add_expense(): # add expense in list and store it in file
     elif b==3:
         exp_dict["Grocery"].append(a)
     elif b==4:
-        exp_dict["Bills_dues"].append(a)     
+        exp_dict["Bills_Dues"].append(a)     
     elif b==5:
         exp_dict["Miscellaneous"].append(a)
     else:
@@ -77,11 +99,12 @@ def add_expense(): # add expense in list and store it in file
 #---------------------------------------------------------------------------------------------------
 
 def view_expense():
-    view = input("Do You Want To View Full Summary Of Expenses Or Want to know category Wise Expense\n Enter 1 for full summary and 2 for category wise expense")
+    view = int(input("Do You Want To View Full Summary Of Expenses Or Want to know category Wise Expense\nEnter 1 For Full Summary And 2 For Category Wise Expense : "))
+    
     if view == 1:
-        pass# exp.full_summary()
+        full_summary()
     elif view == 2:
-        pass# exp.category_summary()
+        category_summary()
     else:
         print("Enter A Valid Input")
         view_expense()
@@ -102,7 +125,7 @@ def starting_interface():
         view_expense()
     else:
         print("Enter A Valid Input")
-        starting_interface()
+        
 
 #-----------------------------------------------------------------------------------------------
 
