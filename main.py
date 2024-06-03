@@ -14,22 +14,29 @@ class expense():
         Self.amount = amount
         Self.description = description
     def store_data(self):
-        df = pd.DataFrame(data=exp_dict) 
+        df = pd.DataFrame(data=exp_dict)
         file_path = 'expenses.csv'      
         file_exists = os.path.isfile(file_path)   #if file exist it will not add header again and again 
         df.to_csv("expenses.csv" , index = False , mode="a", header= not file_exists)
         print("Data Stored Successfully 🥳")
-        print("-"*50)
+        print("-"*70)
 
 #---------------------------------------------------------------------------------------------------------------           
 
 def full_summary(): # to read file and show its data 
         pt = pd.read_csv("expenses.csv")
-        print(pt)
+        print(pt) #prints complete dataframe
+
+        #it will include only numeric datatype excluding nan and string .sum()to take sum of each colum
+        total = pt.select_dtypes(include=[np.number]).sum() 
+        print("-"*70)
+        print("TOTAL MONEY💸 SPENT TILL NOW IS RS.",total.sum())           #returning total spent in all category
+        print("YOU SPENT MAXIMUM ON",total.idxmax(),"= Rs.",total.max())   #returning category with maximum expenditure
+        print("-"*70)
 
 def category_summary(): # just add list of category wise expense
         pt = pd.read_csv("expenses.csv")
-        print("\n-\n"*50)
+        print("-"*50)
         select_category = int(input("Select A Category : - \n 1.FOOD \n 2.CLOTHES \n 3.GROCERY \n 4.BILLS AND DUES \n 5.OTHER MISCELLANEOUS EXPENSE : "))
 
         if select_category==1 :
@@ -52,16 +59,14 @@ def category_summary(): # just add list of category wise expense
 exp_dict = {
     "Food" : [] , "Clothes" : [] , "Grocery" : [] , "Bills_Dues" : [] ,"Miscellaneous" : [] ,
     "Description" : []
-}
-
-total = [] # stores total expense
+} 
 
 #---------------------------------------------------------------------------------------------------------------
 
 def add_expense(): # add expense in list and store it in file
-    print("-"*50)
+    
     a = int(input("Enetr Amount Of Expense : "))
-    total.append(a) #first adding expenditure to a list of total expense
+
     b=int(input("Select A Category : - \n 1.FOOD \n 2.CLOTHES \n 3.GROCERY \n 4.BILLS AND DUES \n 5.OTHER MISCELLANEOUS EXPENSE : "))
 
     #category wise addition of expenditure
@@ -80,7 +85,7 @@ def add_expense(): # add expense in list and store it in file
         add_expense()
 
     #adding description of expense
-    print("-"*50)
+    print("-"*70)
     c=input("Enter Description Of Your Expense :  ")
     exp_dict["Description"].append(c)
 
@@ -99,8 +104,8 @@ def add_expense(): # add expense in list and store it in file
 #---------------------------------------------------------------------------------------------------
 
 def view_expense():
-    view = int(input("Do You Want To View Full Summary Of Expenses Or Want to know category Wise Expense\nEnter 1 For Full Summary And 2 For Category Wise Expense : "))
-    
+    view = int(input("Do You Want To View Full Summary Of Expenses Or \nWant to know category Wise Expense\nEnter 1 For Full Summary And \nEnter 2 For Category Wise Expense : "))
+    print("-"*70)
     if view == 1:
         full_summary()
     elif view == 2:
@@ -114,10 +119,11 @@ def view_expense():
 #starting user interface
 
 def starting_interface():
-    print("="*50)
-    print("WELCOME TO EXPENSE TRACKER 🙏 ")
-    print("="*50)
-    user = int(input("Press 1 To Add A New Expense \nPress 2 To View Expense :  "))
+    print("="*70)
+    print("                    WELCOME TO EXPENSE TRACKER 🙏 ")
+    print("="*70)
+    user = int(input("\nPress 1 To Add A New Expense \nPress 2 To View Expense :  "))
+    print("-"*70)
 
     if user == 1:
         add_expense()
