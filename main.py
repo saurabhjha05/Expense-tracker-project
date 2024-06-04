@@ -1,11 +1,12 @@
-# #Create a simple personal expense tracker that allows users to log their daily expenses and view summaries.
- # ek file jisma tabular data form ma sab save hoga 3 columns ma 
+# # #Create a simple personal expense tracker that allows users to log their daily expenses and view summaries.
+#  # ek file jisma tabular data form ma sab save hoga 3 columns ma 
 
-#---------------------------------------------------------------------------------------------------------------
+# #---------------------------------------------------------------------------------------------------------------
 
 import pandas as pd
 import numpy as np 
 import os
+import matplotlib.pyplot as plt 
 
 class expense():
 
@@ -34,9 +35,19 @@ def full_summary(): # to read file and show its data
         print("YOU SPENT MAXIMUM ON",total.idxmax(),"= Rs.",total.max())   #returning category with maximum expenditure
         print("-"*70)
 
-def category_summary(): # just add list of category wise expense
+        graph = input("Do You Want To View Category-Wise Pie Chart Distribution\nThen Enter 'Y' else Enter Any Value to exit : ")
+        if graph.lower() == "y" :
+            col_name = pt.select_dtypes(include=[np.number]).columns       #selecting only column with integer value
+            s = pt[col_name].sum()
+            color_pallete = ["#ef476f","#ffd166","#06d6a0","#118ab2","#073b4c"]
+            plt.pie(s,labels=["Food","Clothes","Grocery","Bills and Dues","Miscellaneous"],colors= color_pallete)
+            plt.title("CATEGORY WISE EXPENDITURE DISTRIBUTION")
+            plt.show()                                                     #plotting pie chart categorywise
+        else:
+            pass
+
+def category_summary(): # show complete data of a perticular category
         pt = pd.read_csv("expenses.csv")
-        print("-"*50)
         select_category = int(input("Select A Category : - \n 1.FOOD \n 2.CLOTHES \n 3.GROCERY \n 4.BILLS AND DUES \n 5.OTHER MISCELLANEOUS EXPENSE : "))
 
         if select_category==1 :
@@ -50,12 +61,13 @@ def category_summary(): # just add list of category wise expense
         elif select_category==5:
             col = "Miscellaneous"
         else:
-            print("invalid choice")
-            category_summary()
-        print(pt.loc[:,[col]])
+            print("⛔ Invalid Choice")
+            
+        print(pt.loc[:,[col]]) #printing all rows and selected column
 
 #---------------------------------------------------------------------------------------------------------------
 
+#dictionary with category as key and empty list as value 
 exp_dict = {
     "Food" : [] , "Clothes" : [] , "Grocery" : [] , "Bills_Dues" : [] ,"Miscellaneous" : [] ,
     "Description" : []
@@ -63,7 +75,7 @@ exp_dict = {
 
 #---------------------------------------------------------------------------------------------------------------
 
-def add_expense(): # add expense in list and store it in file
+def add_expense(): # add expense in dictionary and store it in file
     
     a = int(input("Enetr Amount Of Expense : "))
 
@@ -81,15 +93,13 @@ def add_expense(): # add expense in list and store it in file
     elif b==5:
         exp_dict["Miscellaneous"].append(a)
     else:
-        print("invalid choice")
-        add_expense()
+        print("⛔ Invalid Choice")
 
     #adding description of expense
     print("-"*70)
     c=input("Enter Description Of Your Expense :  ")
     exp_dict["Description"].append(c)
 
-    
     #to fill missing data with nan value so it doesnt throw an error while creating a datframe
 
     max_len = max(len(v) for v in exp_dict.values())  #maximum length of value list 
@@ -111,7 +121,7 @@ def view_expense():
     elif view == 2:
         category_summary()
     else:
-        print("Enter A Valid Input")
+        print("⛔ Enter A Valid Input\n")
         view_expense()
 
 #---------------------------------------------------------------------------------------------------
@@ -131,6 +141,7 @@ def starting_interface():
         view_expense()
     else:
         print("Enter A Valid Input")
+        starting_interface()
         
 
 #-----------------------------------------------------------------------------------------------
